@@ -48,15 +48,14 @@ exports.getIndex = async(req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try{
-    req.user.getCart();
-    // const user=await req.user.populate('cart.items.productId','title price');
-    // const products=user.cart.items;
-    // res.render('shop/cart', {
-    //   path: '/cart',
-    //   pageTitle: 'Your Cart',
-    //   products: products,
-    //   totalPrice: "not calculated yet"
-    // });
+    const user=await req.user.populate('cart.items.productId','title price -_id');
+    const products=user.cart.items;
+    res.render('shop/cart', {
+      path: '/cart',
+      pageTitle: 'Your Cart',
+      products: products,
+      totalPrice: "not calculated yet"
+    });
   }
   catch(err){
     console.log(err);
@@ -92,8 +91,7 @@ exports.getOrders = async (req, res, next) => {
 
   try{
     let orders=await req.user.getOrders();
-    orders=orders.map(item=>{return {_id:item._id,orderItem:item.orderItem}})
-    console.log(orders);
+    // console.log(orders);
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Your Orders',
