@@ -48,14 +48,15 @@ exports.getIndex = async(req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try{
-    const user=await req.user.populate('cart.items.productId','title price');
-    const products=user.cart.items;
-    res.render('shop/cart', {
-      path: '/cart',
-      pageTitle: 'Your Cart',
-      products: products,
-      totalPrice: "not calculated yet"
-    });
+    req.user.getCart();
+    // const user=await req.user.populate('cart.items.productId','title price');
+    // const products=user.cart.items;
+    // res.render('shop/cart', {
+    //   path: '/cart',
+    //   pageTitle: 'Your Cart',
+    //   products: products,
+    //   totalPrice: "not calculated yet"
+    // });
   }
   catch(err){
     console.log(err);

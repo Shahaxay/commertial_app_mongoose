@@ -41,30 +41,13 @@ UserSchema.methods.addToCart = async function (prodId) {
         console.log(err);
     }
 }
-// UserSchema.methods.getCart = async function () {
-//     const products=await this.cart.populate('items.productId');
-//     console.log(products);
-//     // const productIds = this.cart.items.map(i => {
-//     //     return i.productId;
-//     // })
-//     // try {
-//     //     const db = database.getDb();
+UserSchema.methods.deleteCartItem = function (prodId) {
+    this.cart.items = this.cart.items.filter(i => i.productId.toString() != prodId.toString());
+    return this.save();
+}
 
-//     //     const products = await db.collection('Product').find({ _id: { $in: productIds } }).toArray();
-//     //     const requiredProductData = products.map(i => {
-//     //         return {
-//     //             productId: i._id,
-//     //             title: i.title,
-//     //             quantity: this.cart.items.find(cart_i => cart_i.productId.toString() == i._id.toString()).quantity
-//     //         };
-//     //     })
-//     //     return new Promise(res => res(requiredProductData));
-//     // }
-//     // catch (err) {
-//     //     console.log(err);
-//     // }
-// }
-// const mongoDb=require('mongodb');
+
+
 
 // const database=require('../util/database');
 // const Product=require('../models/product');
