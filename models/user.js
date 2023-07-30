@@ -1,23 +1,69 @@
-const mongoose=require('mongoose');
-const { INTEGER } = require('sequelize');
-const Schema=mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const UserSchema=new Schema({
-    name:{
-        type:String,
-        require:true
+const Product = require('../models/product.js');
+
+const UserSchema = new Schema({
+    name: {
+        type: String,
+        require: true
     },
-    email:{
-        type:String,
-        require:true
+    email: {
+        type: String,
+        require: true
     },
-    cart:{
-        items:[
-            {productId:{type:mongoose.Types.ObjectId,ref:'Product',required:true},quantity:{type:Number,required:true}}
+    cart: {
+        items: [
+            { productId: { type: mongoose.Types.ObjectId, ref: 'Product', required: true }, quantity: { type: Number, required: true } }
         ]
     }
 });
 
+UserSchema.methods.addToCart = async function (prodId) {
+    try {
+        const product = await Product.findById(prodId);
+        // console.log(this.cart);
+        const productIndex = this.cart.items.findIndex(item => item.productId.toString() == product._id.toString());
+        let newQuantity = 1;
+        let updated_cart = [...this.cart.items];
+        if (productIndex >= 0) {
+            //increase the quantity count
+            newQuantity = this.cart.items[productIndex].quantity + 1;
+            updated_cart[productIndex].quantity = newQuantity;
+        } else {
+            //insert the product into cart with quantity 1
+            updated_cart.push({ productId: product._id, quantity: newQuantity });
+        }
+        this.cart = { items: updated_cart };
+        return this.save();
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+// UserSchema.methods.getCart = async function () {
+//     const products=await this.cart.populate('items.productId');
+//     console.log(products);
+//     // const productIds = this.cart.items.map(i => {
+//     //     return i.productId;
+//     // })
+//     // try {
+//     //     const db = database.getDb();
+
+//     //     const products = await db.collection('Product').find({ _id: { $in: productIds } }).toArray();
+//     //     const requiredProductData = products.map(i => {
+//     //         return {
+//     //             productId: i._id,
+//     //             title: i.title,
+//     //             quantity: this.cart.items.find(cart_i => cart_i.productId.toString() == i._id.toString()).quantity
+//     //         };
+//     //     })
+//     //     return new Promise(res => res(requiredProductData));
+//     // }
+//     // catch (err) {
+//     //     console.log(err);
+//     // }
+// }
 // const mongoDb=require('mongodb');
 
 // const database=require('../util/database');
@@ -118,4 +164,4 @@ const UserSchema=new Schema({
 //     }
 // }
 
-module.exports=mongoose.model('User',UserSchema);
+module.exports = mongoose.model('User', UserSchema);

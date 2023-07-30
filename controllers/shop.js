@@ -48,8 +48,8 @@ exports.getIndex = async(req, res, next) => {
 
 exports.getCart = async (req, res, next) => {
   try{
-    const products=await req.user.getCart();
-    // console.log(products);
+    const user=await req.user.populate('cart.items.productId','title price');
+    const products=user.cart.items;
     res.render('shop/cart', {
       path: '/cart',
       pageTitle: 'Your Cart',
@@ -65,8 +65,8 @@ exports.getCart = async (req, res, next) => {
 exports.postCart = async (req, res, next) => {
   const prodId = req.body.productId;
   try{
-    const products=await req.user.addToCart(prodId);
-    console.log(products);
+    const user=await req.user.addToCart(prodId);
+    console.log(user.cart.items);
     console.log("added successfully");
     res.redirect('./cart');
   }catch(err){
