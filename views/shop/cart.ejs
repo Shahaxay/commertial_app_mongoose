@@ -1,0 +1,28 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <%if(products.length>0){%>
+                <ul>
+                    <%for(prod of products){%>
+                        <li><%=prod.title%> (<%=prod.quantity%>)
+                        <form action="/cart-delete-item" method="post">
+                            <input type="hidden" name="productId" value="<%=prod.productId%>">
+                            <button class="btn" type="submit">Delete</button>
+                        </form></li>
+                        <%}%>
+                    </ul>
+                    <hr>
+                    <!-- <b>total prict:<%=totalPrice%></b> -->
+                    <div class="centered">
+                        <form action="/create-order" method="post">
+                            <button class="btn" type="submit">Order Now</button>
+                        </form>
+                    </div>
+            <%}else{%>
+                <h1>No Products In The Carts</h1>
+            <%}%>
+        </main>
+        <%- include('../includes/end.ejs') %>
