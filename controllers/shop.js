@@ -3,7 +3,11 @@ const User=require('../models/user');
 
 exports.getProducts = async(req, res, next) => {
   try{
-    const products=await Product.find();
+    const products=await Product.find()
+    // .select('title price userId -_id')
+    // .populate('userId','name email')
+    ;
+    // console.log(products);
     res.render('shop/product-list', {
       prods: products,
       pageTitle: 'All Products',

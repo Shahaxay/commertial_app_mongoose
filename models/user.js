@@ -1,3 +1,23 @@
+const mongoose=require('mongoose');
+const { INTEGER } = require('sequelize');
+const Schema=mongoose.Schema;
+
+const UserSchema=new Schema({
+    name:{
+        type:String,
+        require:true
+    },
+    email:{
+        type:String,
+        require:true
+    },
+    cart:{
+        items:[
+            {productId:{type:mongoose.Types.ObjectId,ref:'Product',required:true},quantity:{type:Number,required:true}}
+        ]
+    }
+});
+
 // const mongoDb=require('mongodb');
 
 // const database=require('../util/database');
@@ -98,4 +118,4 @@
 //     }
 // }
 
-// module.exports=OS_user;
+module.exports=mongoose.model('User',UserSchema);
