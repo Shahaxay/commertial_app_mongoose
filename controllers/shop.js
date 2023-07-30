@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const User=require('../models/user');
+const Order=require('../models/order');
 
 exports.getProducts = async(req, res, next) => {
   try{
@@ -90,8 +91,7 @@ catch(err){
 exports.getOrders = async (req, res, next) => {
 
   try{
-    let orders=await req.user.getOrders();
-    // console.log(orders);
+    let orders=await Order.find({'user.userId':req.user._id}).select('orderItem');
     res.render('shop/orders', {
       path: '/orders',
       pageTitle: 'Your Orders',
@@ -103,10 +103,17 @@ exports.getOrders = async (req, res, next) => {
 };
 
 exports.postOrder=async (req,res,next)=>{
+  const user={name:req.user.name,userId:req.user._id};
   try{
-    const result=await req.user.makeOrder();
-    console.log(result);
-    res.redirect('/orders');
+    await req.user.populate('cart.items.productId');
+    const product=req.user.cart.items.map(i=>{
+      return {product:{...i.productId._doc},quantity:i.quantity};
+    })
+    const order=new Order({orderItem:product,user:user});
+    await order.save();
+    //clean the cart
+    await req.user.clearCart();
+      res.redirect('/orders');
   }
   catch(err){
     console.log(err);

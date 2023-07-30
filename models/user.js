@@ -47,19 +47,9 @@ UserSchema.methods.deleteCartItem = function (prodId) {
     return this.save();
 }
 
-UserSchema.methods.makeOrder = async function () {
-    await this.populate('cart.items.productId','title -_id');
-    const orderItem=this.cart.items;
-    // console.log(orderItem);
-    const order=new Order({orderItem:orderItem,user:this});
-    //save the order
+UserSchema.methods.clearCart=function(){
     this.cart={items:[]};
-    this.save();
-    return order.save();
-}
-
-UserSchema.methods.getOrders=function(){
-    return Order.find({user:this}).select('orderItem');
+    return this.save();
 }
 
 module.exports = mongoose.model('User', UserSchema);
